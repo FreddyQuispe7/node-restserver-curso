@@ -8,18 +8,18 @@ const { verificaToken, verificaAdmin_Role } = require('../middlewares/autenticac
 
 const app = express();
 
-app.get('/usuario', verificaToken ,(req, res) => {
+app.get('/usuario', verificaToken, (req, res) => {
 
     let desde = req.query.desde || 0;
     desde = Number(desde);
 
-    let limite = req.query.limite || 5
+    let limite = req.query.limite || 5;
     limite = Number(limite);
     
     Usuario.find({estado:true}, 'nombre email role estado google img')
         .skip(desde)
         .limit(limite)
-        .exec( (err, usuarios) =>{
+        .exec( (err, usuarios) => {
 
             if( err ) {
                 return res.status(400).json({
@@ -28,7 +28,7 @@ app.get('/usuario', verificaToken ,(req, res) => {
                 });
             }
 
-            Usuario.count({estado:true}, (err, conteo) =>{
+            Usuario.count({estado:true}, (err, conteo) => {
                 res.json({
                     ok: true,
                     usuarios: usuarios,
@@ -36,7 +36,6 @@ app.get('/usuario', verificaToken ,(req, res) => {
                 })
             })
         })
-
 })
 
 app.post('/usuario', [verificaToken, verificaAdmin_Role], function (req, res) {
@@ -63,7 +62,6 @@ app.post('/usuario', [verificaToken, verificaAdmin_Role], function (req, res) {
             ok: true,
             usuario: usuarioDB
         })
-
     });
 })
 
@@ -86,7 +84,6 @@ app.put('/usuario/:id', [verificaToken, verificaAdmin_Role], function (req, res)
             usuario: usuarioDB
         }) 
     })
-    
 })
 
 app.delete('/usuario/:id', [verificaToken, verificaAdmin_Role], function (req, res) {
@@ -101,7 +98,7 @@ app.delete('/usuario/:id', [verificaToken, verificaAdmin_Role], function (req, r
     Usuario.findByIdAndUpdate( id, cambiaEstado, { new: true }, (err, usuarioBorrado) => {
 
         if( err ) {
-            return res.status(400).json({
+            return res.status(500).json({
                 ok: false,
                 err
             });
@@ -121,7 +118,6 @@ app.delete('/usuario/:id', [verificaToken, verificaAdmin_Role], function (req, r
             usuario: usuarioBorrado
         }) 
     })
-
 })
 
 module.exports = app;
